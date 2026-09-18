@@ -17,7 +17,7 @@ function Career() {
           <li
             key={entry.period}
             className="reveal group relative border-t border-[#f4ede4]/15 pt-5 transition-colors duration-300 hover:border-[#7ce0c3]/60"
-            style={{ '--d': 0.18 + i * 0.14 } as CSSProperties}
+            style={{ '--d': Math.min(0.18 + i * 0.14, 0.6) } as CSSProperties}
           >
             <span className="absolute -top-[5px] left-0 h-[9px] w-[9px] rounded-full bg-[#7ce0c3] opacity-60 transition-all duration-300 group-hover:opacity-100 group-hover:shadow-[0_0_18px_#7ce0c3]" />
             <p className="mb-3 text-[0.7rem] uppercase tracking-[0.28em] text-[#7ce0c3]">

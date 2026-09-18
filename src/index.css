@@ -91,6 +91,9 @@ body {
   justify-content: safe center;
   padding: clamp(1.25rem, 5vw, 5rem);
   padding-left: clamp(2.5rem, 8vw, 8rem);
+  /* compensate for the panel's resting offset so content never hides
+     under the right edge once spines stack up on the left */
+  padding-right: calc(clamp(1.5rem, 5vw, 5rem) + var(--rest, 0px));
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -262,6 +265,12 @@ body {
     radial-gradient(120% 120% at 20% 80%, #ffc98a 0%, transparent 50%),
     radial-gradient(110% 110% at 85% 20%, #8a4c17 0%, transparent 60%),
     linear-gradient(135deg, #241507, #5c3512);
+}
+.card-fill.g5 {
+  background:
+    radial-gradient(120% 120% at 25% 25%, #f0dfa8 0%, transparent 50%),
+    radial-gradient(110% 110% at 80% 80%, #6d6220 0%, transparent 60%),
+    linear-gradient(135deg, #1e1a08, #4d4514);
 }
 .card-fill.g4 {
   background:

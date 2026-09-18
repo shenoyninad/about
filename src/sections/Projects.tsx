@@ -11,17 +11,20 @@ function Projects() {
         </h2>
       </div>
 
-      <div className="-mx-2 flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4">
+      {/* wraps to extra rows for 5+ projects; the panel scrolls internally */}
+      <div className="-mx-2 flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3 xl:grid-cols-4">
         {projects.map((project, i) => (
           <a
             key={project.name}
             href={project.href}
             className="project-card reveal group block min-w-[74vw] snap-start sm:min-w-0"
-            style={{ '--d': 0.16 + i * 0.12 } as CSSProperties}
+            style={{ '--d': Math.min(0.16 + i * 0.12, 0.6) } as CSSProperties}
           >
             <div className="card-cover mb-4">
               <div className={`card-fill ${project.gradient}`} />
-              <span className="card-num font-display">0{i + 1}</span>
+              <span className="card-num font-display">
+                {String(i + 1).padStart(2, '0')}
+              </span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
               <h3 className="font-display text-xl md:text-2xl">

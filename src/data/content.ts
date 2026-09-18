@@ -62,6 +62,14 @@ export const projects = [
     gradient: 'g4',
     href: '#',
   },
+  {
+    name: 'Ledgerline',
+    kind: 'Invoicing tool',
+    desc: 'Dead-simple invoicing for freelancers — recurring billing, reminders, done.',
+    stack: ['Next.js', 'Prisma', 'Resend'],
+    gradient: 'g5',
+    href: '#',
+  },
 ]
 
 export const socials = [

@@ -179,6 +179,7 @@ function StackScroll({ panels }: { panels: PanelDef[] }) {
                 visibility: i === 0 ? 'visible' : 'hidden',
                 transform: i === 0 ? undefined : 'translate3d(100vw, 0, 0)',
                 '--accent': panel.accent,
+                '--rest': `${i * metrics.spineW}px`,
               } as CSSProperties
             }
           >
