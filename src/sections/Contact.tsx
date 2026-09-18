@@ -71,6 +71,13 @@ function Contact() {
             {email} <span aria-hidden="true">↗</span>
           </a>
         </Magnetic>
+        <a
+          href="/ninad-shenoy-resume.pdf"
+          download
+          className="inline-flex items-center gap-3 rounded-full border border-[#f4ede4]/25 px-7 py-4 text-sm tracking-wide text-[#f4ede4]/80 transition-colors duration-300 hover:border-[#8fa8ff] hover:text-[#8fa8ff]"
+        >
+          Résumé <span aria-hidden="true">↓</span>
+        </a>
         <p className="text-sm text-[#f4ede4]/50">
           Freelance & collaboration inquiries welcome.
         </p>
