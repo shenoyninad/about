@@ -1,8 +1,303 @@
 @import "tailwindcss";
 
+:root {
+  --cream: #f4ede4;
+  --ink: #0b0910;
+  --cursor-accent: #ff9ecb;
+}
+
 html,
 body,
 #root {
   min-height: 100svh;
-  background-color: var(--color-yellow-400);
+  background-color: var(--ink);
+}
+
+body {
+  color: var(--cream);
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+.font-display {
+  font-family: "Fraunces", ui-serif, Georgia, serif;
+}
+
+::selection {
+  background: var(--cursor-accent);
+  color: var(--ink);
+}
+
+/* ---------- custom cursor ---------- */
+.custom-cursor,
+.custom-cursor * {
+  cursor: none !important;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  pointer-events: none;
+  border-radius: 9999px;
+  opacity: 0;
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: var(--cursor-accent);
+  transition: background-color 260ms ease, opacity 200ms ease;
+}
+
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border: 1.5px solid var(--cursor-accent);
+  transition: border-color 260ms ease, opacity 200ms ease,
+    background-color 260ms ease;
+}
+
+.cursor-ring.is-hover {
+  background: color-mix(in srgb, var(--cursor-accent) 18%, transparent);
+}
+
+/* ---------- stack scroll ---------- */
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.panel {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.panel-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  padding: clamp(1.25rem, 5vw, 5rem);
+  padding-left: clamp(2.5rem, 8vw, 8rem);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.panel-inner::-webkit-scrollbar {
+  display: none;
+}
+
+/* keep flex centering from clipping overflowing content */
+.panel-inner > * {
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .panel-inner {
+    padding-top: 4.5rem;
+    padding-bottom: 3rem;
+  }
+}
+
+/* file-tab spines stacked on the left */
+.spine {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4.5rem 0 1.75rem;
+  border: 0;
+  border-right: 1px solid rgb(255 255 255 / 0.14);
+  box-shadow: 10px 0 30px rgb(0 0 0 / 0.35);
+  will-change: transform;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.spine-num {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.spine-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: rgb(244 237 228 / 0.65);
+  transition: color 200ms ease;
+}
+
+.spine:hover .spine-label {
+  color: var(--accent);
+}
+
+.spine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0.35),
+    transparent 55%
+  );
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .spine-label {
+    display: none;
+  }
+}
+
+/* ---------- scroll-driven reveals ---------- */
+.reveal {
+  --d: 0;
+  --r: clamp(0, (var(--p, 1) - var(--d)) / 0.28, 1);
+  opacity: var(--r);
+  transform: translateY(calc((1 - var(--r)) * 34px));
+}
+
+/* ---------- misc ui ---------- */
+.eyebrow {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.38em;
+  color: var(--accent, var(--cursor-accent));
+}
+
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 1.2s steps(4) infinite;
+}
+
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 3%); }
+  50% { transform: translate(3%, -2%); }
+  75% { transform: translate(-3%, -3%); }
+  100% { transform: translate(2%, 2%); }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-intro {
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes hint-drift {
+  0%, 100% { transform: translateX(0); opacity: 0.55; }
+  50% { transform: translateX(10px); opacity: 1; }
+}
+
+.scroll-hint-arrow {
+  display: inline-block;
+  animation: hint-drift 1.8s ease-in-out infinite;
+}
+
+/* ---------- project cards ---------- */
+.card-cover {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  aspect-ratio: 16 / 9;
+}
+
+.card-cover > .card-fill {
+  position: absolute;
+  inset: 0;
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-card:hover .card-fill {
+  transform: scale(1.06);
+}
+
+.card-fill.g1 {
+  background:
+    radial-gradient(120% 120% at 15% 20%, #ffb0d3 0%, transparent 55%),
+    radial-gradient(110% 110% at 85% 80%, #7a2d52 0%, transparent 60%),
+    linear-gradient(135deg, #2b1220, #57203c);
+}
+.card-fill.g2 {
+  background:
+    radial-gradient(120% 120% at 80% 15%, #8ff0d3 0%, transparent 50%),
+    radial-gradient(110% 110% at 20% 85%, #14584a 0%, transparent 60%),
+    linear-gradient(135deg, #0d211d, #1d4a3f);
+}
+.card-fill.g3 {
+  background:
+    radial-gradient(120% 120% at 20% 80%, #ffc98a 0%, transparent 50%),
+    radial-gradient(110% 110% at 85% 20%, #8a4c17 0%, transparent 60%),
+    linear-gradient(135deg, #241507, #5c3512);
+}
+.card-fill.g4 {
+  background:
+    radial-gradient(120% 120% at 80% 75%, #a8bcff 0%, transparent 52%),
+    radial-gradient(110% 110% at 15% 20%, #26397a 0%, transparent 60%),
+    linear-gradient(135deg, #0e1428, #26386e);
+}
+
+.card-num {
+  position: absolute;
+  right: 0.75rem;
+  bottom: -0.9rem;
+  font-size: clamp(3.5rem, 6vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1;
+  color: rgb(244 237 228 / 0.16);
+  transition: color 400ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-card:hover .card-num {
+  color: rgb(244 237 228 / 0.4);
+  transform: translateY(-6px);
+}
+
+/* ---------- reduced-motion fallback layout ---------- */
+.panel-static {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain,
+  .scroll-hint-arrow,
+  .hero-intro {
+    animation: none;
+  }
 }
