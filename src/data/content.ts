@@ -73,7 +73,6 @@ export const projects = [
 ]
 
 export const socials = [
-  { label: 'GitHub', href: '#' },
-  { label: 'LinkedIn', href: '#' },
-  { label: 'X / Twitter', href: '#' },
+  { label: 'GitHub', href: '#', icon: 'github' as const },
+  { label: 'LinkedIn', href: '#', icon: 'linkedin' as const },
 ]

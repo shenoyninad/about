@@ -3,7 +3,12 @@ import DepthText from '../components/DepthText'
 function Hero() {
   return (
     <div className="panel-inner">
-      <div className="hero-intro flex flex-col items-start gap-8">
+      <div className="hero-ripples" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="hero-intro relative z-10 flex flex-col items-start gap-8">
         <p className="eyebrow">Portfolio — 2026</p>
         <DepthText
           text="Ninad Shenoy"
