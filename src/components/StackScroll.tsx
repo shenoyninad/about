@@ -17,6 +17,10 @@ export type PanelDef = {
 const DWELL = 0.72
 const TRANSITION = 1 - DWELL
 
+// Fraction of each ring slot left empty as a gap between segments.
+const RING_GAP = 0.16
+const RING_SEG = 1 - RING_GAP
+
 const clamp01 = (value: number) => Math.min(Math.max(value, 0), 1)
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
 const easeInOutCubic = (t: number) =>
@@ -50,7 +54,8 @@ function StackScroll({ panels }: { panels: PanelDef[] }) {
   const panelRefs = useRef<(HTMLElement | null)[]>([])
   const spineRefs = useRef<(HTMLButtonElement | null)[]>([])
   const barRef = useRef<HTMLDivElement>(null)
-  const counterRef = useRef<HTMLSpanElement>(null)
+  const ringRefs = useRef<(SVGCircleElement | null)[]>([])
+  const ringNumRef = useRef<SVGTextElement>(null)
   const [metrics, setMetrics] = useState(computeMetrics)
   const reduced = usePrefersReducedMotion()
 
@@ -111,13 +116,26 @@ function StackScroll({ panels }: { panels: PanelDef[] }) {
       }
 
       const active = Math.min(count - 1, Math.max(0, Math.round(g - 0.36)))
+
+      // Fill each ring segment: completed panels full, active panel by how far
+      // we've scrolled into it, upcoming panels empty.
+      const denom = active === count - 1 ? DWELL : 1
+      const ringP = clamp01((g - active) / denom)
+      for (let i = 0; i < count; i++) {
+        const seg = ringRefs.current[i]
+        if (!seg) continue
+        const fill = i < active ? 1 : i === active ? ringP : 0
+        seg.style.strokeDashoffset = (RING_SEG * (1 - fill)).toFixed(4)
+      }
+
       if (active !== lastActive) {
         lastActive = active
         const accent = panels[active].accent
         document.documentElement.style.setProperty('--cursor-accent', accent)
         if (barRef.current) barRef.current.style.backgroundColor = accent
-        if (counterRef.current) {
-          counterRef.current.textContent = `0${active + 1}`
+        if (ringNumRef.current) {
+          ringNumRef.current.textContent = `0${active + 1}`
+          ringNumRef.current.style.fill = accent
         }
       }
 
@@ -217,9 +235,56 @@ function StackScroll({ panels }: { panels: PanelDef[] }) {
 
         <header className="pointer-events-none absolute inset-x-0 top-0 z-[60] flex items-center justify-between px-6 py-5 text-[0.7rem] uppercase tracking-[0.32em] text-[#f4ede4]/80 md:px-10">
           <span>Ninad Shenoy</span>
-          <span className="tabular-nums">
-            <span ref={counterRef}>01</span>
-            <span className="opacity-50"> / 0{panels.length}</span>
+          <span className="flex items-center gap-2.5">
+            <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true">
+              {panels.map((panel, i) => {
+                const rot = -90 + (i + RING_GAP / 2) * (360 / panels.length)
+                return (
+                  <g key={panel.id} transform={`rotate(${rot} 32 32)`}>
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="27"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.14)"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      pathLength={panels.length}
+                      strokeDasharray={`${RING_SEG} ${panels.length}`}
+                    />
+                    <circle
+                      ref={(el) => {
+                        ringRefs.current[i] = el
+                      }}
+                      cx="32"
+                      cy="32"
+                      r="27"
+                      fill="none"
+                      stroke={panel.accent}
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      pathLength={panels.length}
+                      strokeDasharray={`${RING_SEG} ${panels.length}`}
+                      strokeDashoffset={RING_SEG}
+                    />
+                  </g>
+                )
+              })}
+              <text
+                ref={ringNumRef}
+                x="32"
+                y="33"
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize="20"
+                fontWeight="600"
+                className="tabular-nums"
+                fill={panels[0].accent}
+              >
+                01
+              </text>
+            </svg>
+            <span className="opacity-50">/ 0{panels.length}</span>
           </span>
         </header>
 
@@ -230,6 +295,7 @@ function StackScroll({ panels }: { panels: PanelDef[] }) {
             style={{ backgroundColor: panels[0].accent }}
           />
         </div>
+
       </main>
     </>
   )
